@@ -10,7 +10,8 @@ export const inputCheckboxWrapperVariants = tv ({
 })
 
 export const inputCheckBoxVariants = tv({
-    base: `appearance-none peer items-center justify-center 
+    base: `
+    appearance-none peer items-center justify-center 
     cursor-pointer transition overflow-hidden
     `,
 
@@ -22,7 +23,8 @@ export const inputCheckBoxVariants = tv({
                 checked:border-accent-brand checked:bg-accent-brand
                 group-hover:checked:border-accent-brand-light
                 group-hover:checked:bg-accent-brand-light
-            `
+                hover:checked:border-accent-brand-light 
+            `//El fábrica ajeitou essa ultima linha
         },
         size: {
             sm: `w-3 h-3 rounded-sm`,
@@ -34,7 +36,7 @@ export const inputCheckBoxVariants = tv({
     },
     defaultVariants:{
         variant: "default",
-        size: "sm",
+        size: "md",
         disabled: false
     }
 })
@@ -56,8 +58,9 @@ export const inputCheckboxIconVarianta = tv({
     }
 })
 
-interface InputCheckboxProps extends VariantProps<typeof inputCheckBoxVariants>, 
-Omit<React.Component<"input">, "size"  | "disabled ">{
+interface InputCheckboxProps 
+    extends VariantProps<typeof inputCheckBoxVariants>, 
+        Omit<React.ComponentProps<"input">, "size"  | "disabled ">{
 }
 
 export default function InputChecbox({
