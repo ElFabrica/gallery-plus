@@ -37,24 +37,44 @@ export const inputSingleFileIconVariants = tv({
 })
 
 interface InputSingleFileProps extends VariantProps<typeof inputSingleFileVariants>, Omit<React.ComponentProps<"input">, "size"> {
-    error?: React.ReactNode
     form: any
+    allowedExtensions: string[];
+    maxFileSizeInMB: number
+    error?: React.ReactNode
 }
 
 export default function InputSingleFile({
     size,
     error,
     form,
+    allowedExtensions,
+    maxFileSizeInMB,
     ...props
 }: InputSingleFileProps) {
 
     const formValues = useWatch({ control: form.control })
     const name = props.name || ""
     const formFile: File = React.useMemo(() => formValues[name]?.[0], [formValues, name])
+    const {fileExtention, fileSize} = React.useMemo(() => ({
+        fileExtention: formFile?.name?.split(".")?.pop()?.toLowerCase() || "",
+        fileSize: formFile?.size || 0
+    }),[formFile])
+    function isValidExtention() {
+        return allowedExtensions.includes(fileExtention)
+    }
+
+    function isValidSize(){
+        console.log(fileSize <= maxFileSizeInMB * 1024 * 1024)
+        return fileSize <= maxFileSizeInMB * 1024 * 1024
+    }
+
+    function isValidFile(){
+        return isValidExtention() && isValidSize()
+    }
 
     return (
         <div>
-            {!formFile ?
+            {!formFile || !isValidFile() ?
                 (
                     <>
                         <div className="w-full relative group cursor-pointer">
@@ -74,11 +94,24 @@ export default function InputSingleFile({
                                 </Text>
                             </div>
                         </div>
+                        <div className="flex flex-col gap-1 mt-1">
+
+                        {formFile && !isValidExtention() && (
+                            <Text variant="label-small" className="text-accent-red">
+                                Tipo de arquivo inválido
+                            </Text>
+                        )}
+                        {formFile && !isValidSize() && (
+                            <Text variant="label-small" className="text-accent-red">
+                                O tamanho do arquivo ultrapassa o máximo (50MB)
+                            </Text>
+                        )}
                         {error &&
                             <Text variant="label-small" className="text-accent-red">
                                 Erro no campo
                             </Text>
                         }
+                        </div>
                     </>) : (
 
 
