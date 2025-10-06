@@ -39,8 +39,9 @@ export const inputSingleFileIconVariants = tv({
 interface InputSingleFileProps extends VariantProps<typeof inputSingleFileVariants>, Omit<React.ComponentProps<"input">, "size"> {
     form: any
     allowedExtensions: string[];
-    maxFileSizeInMB: number
-    error?: React.ReactNode
+    maxFileSizeInMB: number;
+    error?: React.ReactNode;
+    replaceBy: React.ReactNode;
 }
 
 export default function InputSingleFile({
@@ -49,30 +50,32 @@ export default function InputSingleFile({
     form,
     allowedExtensions,
     maxFileSizeInMB,
+    replaceBy,
     ...props
 }: InputSingleFileProps) {
 
     const formValues = useWatch({ control: form.control })
     const name = props.name || ""
     const formFile: File = React.useMemo(() => formValues[name]?.[0], [formValues, name])
-    const {fileExtention, fileSize} = React.useMemo(() => ({
+    const { fileExtention, fileSize } = React.useMemo(() => ({
         fileExtention: formFile?.name?.split(".")?.pop()?.toLowerCase() || "",
         fileSize: formFile?.size || 0
-    }),[formFile])
+    }), [formFile])
     function isValidExtention() {
         return allowedExtensions.includes(fileExtention)
     }
 
-    function isValidSize(){
+    function isValidSize() {
         console.log(fileSize <= maxFileSizeInMB * 1024 * 1024)
         return fileSize <= maxFileSizeInMB * 1024 * 1024
     }
 
-    function isValidFile(){
+    function isValidFile() {
         return isValidExtention() && isValidSize()
     }
 
     return (
+
         <div>
             {!formFile || !isValidFile() ?
                 (
@@ -96,49 +99,53 @@ export default function InputSingleFile({
                         </div>
                         <div className="flex flex-col gap-1 mt-1">
 
-                        {formFile && !isValidExtention() && (
-                            <Text variant="label-small" className="text-accent-red">
-                                Tipo de arquivo inválido
-                            </Text>
-                        )}
-                        {formFile && !isValidSize() && (
-                            <Text variant="label-small" className="text-accent-red">
-                                O tamanho do arquivo ultrapassa o máximo (50MB)
-                            </Text>
-                        )}
-                        {error &&
-                            <Text variant="label-small" className="text-accent-red">
-                                Erro no campo
-                            </Text>
-                        }
+                            {formFile && !isValidExtention() && (
+                                <Text variant="label-small" className="text-accent-red">
+                                    Tipo de arquivo inválido
+                                </Text>
+                            )}
+                            {formFile && !isValidSize() && (
+                                <Text variant="label-small" className="text-accent-red">
+                                    O tamanho do arquivo ultrapassa o máximo (50MB)
+                                </Text>
+                            )}
+                            {error &&
+                                <Text variant="label-small" className="text-accent-red">
+                                    Erro no campo
+                                </Text>
+                            }
                         </div>
                     </>) : (
+                    <>
+                        {replaceBy}
 
 
 
-                    <div className={`flex gap-3 items-center 
+                        <div className={`flex gap-3 items-center 
             border border-solid border-border-primary mt-5
             p-3 rounded
             `}>
-                        <Icon svg={FileImageIcon} className="fill-white h-6 w-6" />
-                        <div className="flex flex-col">
-                            <div className="truncate max-w-80">
-                                <Text variant="label-medium" className="text-placeholder "> {formFile.name}</Text>
-                            </div>
-                            <div className="flex">
-                                <button
-                                    type="button"
-                                    className={textVariants({
-                                        variant: "label-small",
-                                        className: "text-accent-red cursor-pointer hover:underline"
+                            <Icon svg={FileImageIcon} className="fill-white h-6 w-6" />
+                            <div className="flex flex-col">
+                                <div className="truncate max-w-80">
+                                    <Text variant="label-medium" className="text-placeholder "> {formFile.name}</Text>
+                                </div>
+                                <div className="flex">
+                                    <button
+                                        type="button"
+                                        className={textVariants({
+                                            variant: "label-small",
+                                            className: "text-accent-red cursor-pointer hover:underline"
 
-                                    })}
-                                    onClick={() => form.setValue(name, undefined)}
-                                >Remover</button>
+                                        })}
+                                        onClick={() => form.setValue(name, undefined)}
+                                    >Remover</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </>
                 )}
         </div>
+
     )
 }
