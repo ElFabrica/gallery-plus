@@ -11,6 +11,10 @@ import InputChecbox from "./components/input-checkbox";
 import InputSingleFile from "./components/input-single-file";
 import { useForm } from "react-hook-form";
 import ImagemFilePreview from "./components/image-file-preview";
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader } from "./components/dialog";
+import { DialogTrigger } from "./components/dialog";
+import Text from "./components/text";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 export default function App() {
 
@@ -67,13 +71,37 @@ export default function App() {
 				<InputChecbox />
 			</div>
 			<div>
-				<InputSingleFile
-					form={form}
-					{...form.register("file")}
-					allowedExtensions={['png', 'jpg', 'jpeg', 'webp']}
-					maxFileSizeInMB={50}
-					replaceBy={<ImagemFilePreview src={fileSource} alt="imagem" />}
-				/>
+
+			</div>
+			<div>
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button>Abrir modal</Button>
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader> Teste modal</DialogHeader>
+						<DialogBody>
+							<Text as="div" className="mb-4">
+								Teste conteúdo do body
+							</Text>
+							<InputSingleFile
+								form={form}
+								{...form.register("file")}
+								allowedExtensions={['png', 'jpg', 'jpeg', 'webp']}
+								maxFileSizeInMB={50}
+								replaceBy={<ImagemFilePreview src={fileSource} alt="imagem" />}
+							/>
+						</DialogBody>
+						<DialogFooter>
+							<DialogClose asChild>
+								<Button variant="secondary">Cancelar</Button>
+							</DialogClose>
+							<DialogClose asChild>
+								<Button>Adicionar</Button>
+							</DialogClose>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 			</div>
 		</div>
 	);
