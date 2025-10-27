@@ -1,22 +1,19 @@
 import Container from "../components/container";
-import PhotoWidget from "../contexts/photos/components/photo-widget";
+import PhotosList from "../contexts/photos/components/photo-list";
 
 
 export default function PageHome() {
     return (
         <Container>
-            <div className="grid grid-cols-4 gap-9">
-                <PhotoWidget
-                    photo={{
-                        id: "123123",
-                        title: "Test",
-                        imageId: "portrait-tower.png",
-                        albums: [{ id: "123123", title: "test" }]
-                    }}
-                    loading
-
-                />
-            </div>
+            <PhotosList
+                loading
+                photos={[
+                    { id: "123123", albums: [], imageId: "portrait-tower.png", title: "Nada" },
+                    { id: "321", albums: [], imageId: "portrait-tower.png", title: "Nada" },
+                    { id: "432", albums: [], imageId: "portrait-tower.png", title: "Nada" },
+                    { id: "345", albums: [], imageId: "portrait-tower.png", title: "Nada" }
+                ]}
+            />
         </Container>
     )
 }

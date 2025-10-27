@@ -5,7 +5,6 @@ import ImagemPreview from "../../../components/image-preview";
 import Skeleton from "../../../components/skeleton";
 import Text from "../../../components/text";
 import type { Photo } from "../models/photos";
-import classNames from "classnames";
 
 
 interface PhotoWidgetProps {
@@ -20,11 +19,11 @@ export default function PhotoWidget({ photo, loading }: PhotoWidgetProps) {
                 <ImagemPreview
                     src={`/images/${photo.imageId}`}
                     title={photo.title}
-                    imageClassNasme={`w-[13.5624rem] h-[13.5624rem] rounded-lg`}
+                    imageClassNasme={`w-[10.875rem] h-[10.875rem] rounded-lg`}
                 />
             )
                 : (
-                    <Skeleton className={`w-[13.5624rem] h-[13.5624rem] rounded-lg`} />
+                    <Skeleton className={`w-[10.875rem] h-[10.875rem] rounded-lg`} />
                 )
             }
             <div className="flex flex-col gap-2">
