@@ -17,7 +17,7 @@ interface ImagemFilePreviewExtends extends React.ComponentProps<"img"> {
     imageClassNasme?: string
 }
 
-export default function ImagemFilePreview({
+export default function ImagemPreview({
     className,
     imageClassNasme,
     ...props
