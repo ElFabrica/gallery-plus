@@ -36,7 +36,8 @@ export default function PhotoWidget({ photo, loading }: PhotoWidgetProps) {
                 )}
                 <div className="flex gap-1 min-h-[1.375rem]">
                     {!loading ? (
-                        <>{photo.albums.slice(0.1).map((album) => <Badge className="truncate" size="xs" key={album.id}>{album.title} </Badge>)}
+                        <>{photo.albums.slice(0, 1).map((album) => (
+                            <Badge className="truncate" size="xs" key={album.id}>{album.title} </Badge>))}
                             {photo.albums.length > 1 && <Badge size="xs"> +{photo.albums.length - 1}</Badge>}
                         </>
                     ) : (
