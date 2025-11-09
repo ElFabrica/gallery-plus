@@ -5,11 +5,12 @@ import Skeleton from "../components/skeleton";
 import PhotosNavigator from "../contexts/photos/components/photos-navigator";
 import ImagemPreview from "../components/image-preview";
 import Button from "../components/button";
+import AlbumsListSelectable from "../contexts/albums/components/albums-list-selectable";
 
 
 export default function PagePhotoDetails() {
     const { id } = useParams()
-    const isLoadingPhoto = true
+    const isLoadingPhoto = false
     const photo = {
         id: "123123", albums: [
             { id: "1", title: "Album 1" },
@@ -22,7 +23,7 @@ export default function PagePhotoDetails() {
         <Container>
             <header className="flex items-center justify-between gap-8 my-8">
                 {!isLoadingPhoto ? (
-                    <Text variant="heading-large">
+                    <Text variant="heading-large" as="h2">
                         {photo.title}
                     </Text>
                 ) : (
@@ -30,7 +31,7 @@ export default function PagePhotoDetails() {
                 )}
                 <PhotosNavigator loading={isLoadingPhoto} />
             </header>
-            <div className="grid grid-cols-[21rem] gap-24">
+            <div className="grid grid-cols-[21rem_1fr] gap-24">
                 <div className="space-y-3">
                     {!isLoadingPhoto ?
                         (<ImagemPreview
@@ -49,6 +50,13 @@ export default function PagePhotoDetails() {
                         <Skeleton className="w-20 h-10" />
 
                     }
+                </div>
+
+                <div className="py-3">
+                    <Text as="h3" variant="heading-medium" className="mb-6">Álbuns</Text>
+                    <AlbumsListSelectable
+                        loading={isLoadingPhoto}
+                        albums={photo.albums} photo={photo} />
                 </div>
             </div>
         </Container>
