@@ -19,23 +19,23 @@ export async function albumsRoutes(fastify: FastifyInstance, albumsService: Albu
   fastify.get('/albums/:id', async (request, reply) => {
     try {
       const paramsResult = albumParamsSchema.safeParse(request.params);
-      
+
       if (!paramsResult.success) {
-        reply.status(400).send({ 
-          error: 'Invalid album ID', 
-          details: paramsResult.error.errors 
+        reply.status(400).send({
+          error: 'Invalid album ID',
+          details: paramsResult.error.errors
         });
         return;
       }
 
       const { id } = paramsResult.data;
       const album = await albumsService.getAlbumById(id);
-      
+
       if (!album) {
         reply.status(404).send({ error: 'Album not found' });
         return;
       }
-      
+
       reply.send(album);
     } catch (error) {
       console.error('Error getting album:', error);
@@ -45,13 +45,14 @@ export async function albumsRoutes(fastify: FastifyInstance, albumsService: Albu
 
   // POST /albums
   fastify.post('/albums', async (request, reply) => {
+    console.log("Chegou sim")
     try {
       const bodyResult = createAlbumSchema.safeParse(request.body);
-      
+
       if (!bodyResult.success) {
-        reply.status(400).send({ 
-          error: 'Invalid request data', 
-          details: bodyResult.error.errors 
+        reply.status(400).send({
+          error: 'Invalid request data',
+          details: bodyResult.error.errors
         });
         return;
       }
@@ -60,15 +61,15 @@ export async function albumsRoutes(fastify: FastifyInstance, albumsService: Albu
       reply.status(201).send(album);
     } catch (error) {
       console.error('Error creating album:', error);
-      
+
       if (error instanceof ZodError) {
-        reply.status(400).send({ 
-          error: 'Validation error', 
-          details: error.errors 
+        reply.status(400).send({
+          error: 'Validation error',
+          details: error.errors
         });
         return;
       }
-      
+
       reply.status(500).send({ error: 'Failed to create album' });
     }
   });
@@ -77,18 +78,18 @@ export async function albumsRoutes(fastify: FastifyInstance, albumsService: Albu
   fastify.delete('/albums/:id', async (request, reply) => {
     try {
       const paramsResult = albumParamsSchema.safeParse(request.params);
-      
+
       if (!paramsResult.success) {
-        reply.status(400).send({ 
-          error: 'Invalid album ID', 
-          details: paramsResult.error.errors 
+        reply.status(400).send({
+          error: 'Invalid album ID',
+          details: paramsResult.error.errors
         });
         return;
       }
 
       const { id } = paramsResult.data;
       const deleted = await albumsService.deleteAlbum(id);
-      
+
       if (!deleted) {
         reply.status(404).send({ error: 'Album not found' });
         return;

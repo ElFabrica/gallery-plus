@@ -6,10 +6,15 @@ import PhotosNavigator from "../contexts/photos/components/photos-navigator";
 import ImagemPreview from "../components/image-preview";
 import Button from "../components/button";
 import AlbumsListSelectable from "../contexts/albums/components/albums-list-selectable";
+import useAlbums from "../contexts/albums/hooks/user-albums";
 
 
 export default function PagePhotoDetails() {
     const { id } = useParams()
+
+    const { albums, isLoadingAlbums } = useAlbums()
+
+
     const isLoadingPhoto = false
     const photo = {
         id: "123123", albums: [
@@ -55,8 +60,8 @@ export default function PagePhotoDetails() {
                 <div className="py-3">
                     <Text as="h3" variant="heading-medium" className="mb-6">Álbuns</Text>
                     <AlbumsListSelectable
-                        loading={isLoadingPhoto}
-                        albums={photo.albums} photo={photo} />
+                        loading={isLoadingAlbums}
+                        albums={albums} photo={photo} />
                 </div>
             </div>
         </Container>
