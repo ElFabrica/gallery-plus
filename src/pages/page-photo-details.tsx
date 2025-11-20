@@ -8,62 +8,64 @@ import Button from "../components/button";
 import AlbumsListSelectable from "../contexts/albums/components/albums-list-selectable";
 import useAlbums from "../contexts/albums/hooks/user-albums";
 
-
 export default function PagePhotoDetails() {
-    const { id } = useParams()
+  const { id } = useParams();
 
-    const { albums, isLoadingAlbums } = useAlbums()
+  const { albums, isLoadingAlbums } = useAlbums();
 
+  const isLoadingPhoto = false;
+  const photo = {
+    id: "123123",
+    albums: [
+      { id: "1", title: "Album 1" },
+      { id: "2", title: "Album 2" },
+      { id: "3", title: "Album 3" },
+    ],
+    imageId: "portrait-tower.png",
+    title: "Viva a imagem",
+  };
 
-    const isLoadingPhoto = false
-    const photo = {
-        id: "123123", albums: [
-            { id: "1", title: "Album 1" },
-            { id: "2", title: "Album 2" },
-            { id: "3", title: "Album 3" }
-        ], imageId: "portrait-tower.png", title: "Viva a imagem"
-    }
+  return (
+    <Container>
+      <header className="flex items-center justify-between gap-8 my-8">
+        {!isLoadingPhoto ? (
+          <Text variant="heading-large" as="h2">
+            {photo.title}
+          </Text>
+        ) : (
+          <Skeleton className="w-48 h-8" />
+        )}
+        <PhotosNavigator loading={isLoadingPhoto} />
+      </header>
+      <div className="grid grid-cols-[21rem_1fr] gap-24">
+        <div className="space-y-3">
+          {!isLoadingPhoto ? (
+            <ImagemPreview
+              src={`/images/${photo?.imageId}`}
+              title={photo.title}
+              imageClassNasme={`h-[21rem]`}
+            />
+          ) : (
+            <Skeleton className="h-[21rem]" />
+          )}
+          {!isLoadingPhoto ? (
+            <Button variant="destructive">Excluir</Button>
+          ) : (
+            <Skeleton className="w-20 h-10" />
+          )}
+        </div>
 
-    return (
-        <Container>
-            <header className="flex items-center justify-between gap-8 my-8">
-                {!isLoadingPhoto ? (
-                    <Text variant="heading-large" as="h2">
-                        {photo.title}
-                    </Text>
-                ) : (
-                    <Skeleton className="w-48 h-8" />
-                )}
-                <PhotosNavigator loading={isLoadingPhoto} />
-            </header>
-            <div className="grid grid-cols-[21rem_1fr] gap-24">
-                <div className="space-y-3">
-                    {!isLoadingPhoto ?
-                        (<ImagemPreview
-                            src={`/images/${photo?.imageId}`}
-                            title={photo.title}
-                            imageClassNasme={`h-[21rem]`}
-                        />
-                        ) : (
-                            <Skeleton className="h-[21rem]" />
-                        )}
-                    {!isLoadingPhoto ?
-                        <Button variant="destructive">
-                            Excluir
-                        </Button>
-                        :
-                        <Skeleton className="w-20 h-10" />
-
-                    }
-                </div>
-
-                <div className="py-3">
-                    <Text as="h3" variant="heading-medium" className="mb-6">Álbuns</Text>
-                    <AlbumsListSelectable
-                        loading={isLoadingAlbums}
-                        albums={albums} photo={photo} />
-                </div>
-            </div>
-        </Container>
-    )
+        <div className="py-3">
+          <Text as="h3" variant="heading-medium" className="mb-6">
+            Álbuns
+          </Text>
+          <AlbumsListSelectable
+            loading={isLoadingAlbums}
+            albums={albums}
+            photo={photo}
+          />
+        </div>
+      </div>
+    </Container>
+  );
 }
