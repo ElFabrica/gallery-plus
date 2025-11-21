@@ -15,7 +15,6 @@ import InputSingleFile from "../../../components/input-single-file";
 import InputText from "../../../components/input-text";
 import Skeleton from "../../../components/skeleton";
 import Text from "../../../components/text";
-import type { Album } from "../../albums/models/album";
 import useAlbums from "../../albums/hooks/user-albums";
 
 interface PhotoNewDialogProps {
