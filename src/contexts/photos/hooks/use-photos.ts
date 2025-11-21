@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Photo } from "../models/photos";
-import { fetcher } from "../../../helpers/api";
+import { api, fetcher } from "../../../helpers/api";
 import { useQueryState, createSerializer, parseAsString } from "nuqs";
+import type { PhotoNewFormSchema } from "../schema";
 
 const toSearchParams = createSerializer({
   albumId: parseAsString,
@@ -17,6 +18,36 @@ export default function usePhotos() {
     queryFn: () => fetcher(`/photos${toSearchParams({ albumId, q })}`),
   });
 
+  const querryClient = useQueryClient();
+
+  async function createPhoto(payload: PhotoNewFormSchema) {
+    try {
+      const { data } = await api.post<Photo>("/photos", {
+        title: payload.title,
+      });
+
+      await api.post(
+        `/photos/${data.id}/image`,
+        {
+          file: payload.file[0],
+        },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (payload.albumsIds && payload.albumsIds.length > 0) {
+        await api.put(`/photos/${data.id}/albums`, {
+          albumsIds: payload.albumsIds,
+        });
+      }
+      querryClient.invalidateQueries({ queryKey: ["photos"] });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   return {
     photos: data || [],
     isLoadingPhoto: isLoading,
@@ -26,5 +57,6 @@ export default function usePhotos() {
       q,
       setSearchFoto,
     },
+    createPhoto,
   };
 }
