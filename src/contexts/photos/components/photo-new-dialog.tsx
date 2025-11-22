@@ -15,11 +15,12 @@ import InputSingleFile from "../../../components/input-single-file";
 import InputText from "../../../components/input-text";
 import Skeleton from "../../../components/skeleton";
 import Text from "../../../components/text";
-import useAlbums from "../../albums/hooks/user-albums";
+import useAlbums from "../../albums/hooks/use-albums";
 import { photoNewFormSchema, type PhotoNewFormSchema } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState, useTransition } from "react";
 import usePhoto from "../hooks/use-photos";
+import usePhotoAlbums from "../hooks/use-photo-album";
 
 interface PhotoNewDialogProps {
   trigger: React.ReactNode;
@@ -38,6 +39,7 @@ export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
 
   const file = form.watch("file");
   const fileSource = file?.[0] ? URL.createObjectURL(file[0]) : undefined;
+  const { managePhotoAlbum } = usePhotoAlbums();
 
   useEffect(() => {
     if (!modalOpen) {

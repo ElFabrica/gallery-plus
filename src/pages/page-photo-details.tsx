@@ -6,7 +6,7 @@ import PhotosNavigator from "../contexts/photos/components/photos-navigator";
 import ImagemPreview from "../components/image-preview";
 import Button from "../components/button";
 import AlbumsListSelectable from "../contexts/albums/components/albums-list-selectable";
-import useAlbums from "../contexts/albums/hooks/user-albums";
+import useAlbums from "../contexts/albums/hooks/use-albums";
 import usePhoto from "../contexts/photos/hooks/use-photo";
 import type { Photo } from "../contexts/photos/models/photos";
 

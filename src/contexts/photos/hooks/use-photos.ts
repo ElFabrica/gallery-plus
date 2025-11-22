@@ -3,6 +3,7 @@ import type { Photo } from "../models/photos";
 import { api, fetcher } from "../../../helpers/api";
 import { useQueryState, createSerializer, parseAsString } from "nuqs";
 import type { PhotoNewFormSchema } from "../schema";
+import { toast } from "sonner";
 
 const toSearchParams = createSerializer({
   albumId: parseAsString,
@@ -43,8 +44,10 @@ export default function usePhotos() {
         });
       }
       querryClient.invalidateQueries({ queryKey: ["photos"] });
+
+      toast.success("Foto adicionada com sucesso");
     } catch (error) {
-      throw error;
+      toast.error("Erro ao cadastrar foto");
     }
   }
 
