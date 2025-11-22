@@ -10,7 +10,6 @@ export const inputCheckboxWrapperVariants = tv({
   variants: {
     disabled: {
       true: `pointer-events-none opacity-80`,
-      false: `pointer-events-none opacity-80`,
     },
   },
 });

@@ -13,7 +13,7 @@ import Text from "../../../components/text";
 import SelectCheckboxIllustration from "../../../assets/images/select-checkbox.svg?react";
 import Skeleton from "../../../components/skeleton";
 import PhotoImageSelectable from "../../photos/components/photo-image-selectable";
-import usePhotos from "../../photos/hooks/use-photos";
+import usePhotos from "../../photos/hooks/use-photo";
 import { useForm } from "react-hook-form";
 import { albumNewFormSchema, type AlbumNewFormSchema } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";

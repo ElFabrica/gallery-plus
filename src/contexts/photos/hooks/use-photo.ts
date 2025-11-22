@@ -1,23 +1,64 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetcher } from "../../../helpers/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Photo } from "../models/photos";
+import { api, fetcher } from "../../../helpers/api";
+import { useQueryState, createSerializer, parseAsString } from "nuqs";
+import type { PhotoNewFormSchema } from "../schema";
+import { toast } from "sonner";
+import usePhotoAlbums from "./use-photo-album";
 
-interface PhotoDetailsResponse extends Photo {
-  nextPhotoId?: string;
-  previousPhotoId?: string;
-}
+const toSearchParams = createSerializer({
+  albumId: parseAsString,
+  q: parseAsString,
+});
 
-export default function usePhoto(id?: string) {
-  const { data, isLoading } = useQuery<PhotoDetailsResponse>({
-    queryKey: ["photo", id],
-    queryFn: () => fetcher(`/photos/${id}`),
-    enabled: id !== null ? true : false,
+export default function usePhotos() {
+  const [albumId, setAlbumId] = useQueryState("albumId");
+  const [q, setSearchFoto] = useQueryState("q");
+  const querryClient = useQueryClient();
+  const { managePhotoOnAlbum } = usePhotoAlbums();
+
+  const { data, isLoading } = useQuery<Photo[]>({
+    queryKey: ["photos", albumId, q],
+    queryFn: () => fetcher(`/photos${toSearchParams({ albumId, q })}`),
   });
 
+  async function createPhoto(payload: PhotoNewFormSchema) {
+    try {
+      const { data } = await api.post<Photo>("/photos", {
+        title: payload.title,
+      });
+
+      await api.post(
+        `/photos/${data.id}/image`,
+        {
+          file: payload.file[0],
+        },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (payload.albumsIds && payload.albumsIds.length > 0) {
+        await managePhotoOnAlbum(data.id, payload.albumsIds);
+      }
+      querryClient.invalidateQueries({ queryKey: ["photos"] });
+
+      toast.success("Foto adicionada com sucesso");
+    } catch (error) {
+      toast.error("Erro ao cadastrar foto");
+    }
+  }
+
   return {
-    photo: data,
-    nextPhotoId: data?.nextPhotoId,
-    previeousPhotoId: data?.previousPhotoId,
+    photos: data || [],
     isLoadingPhoto: isLoading,
+    filters: {
+      albumId,
+      setAlbumId,
+      q,
+      setSearchFoto,
+    },
+    createPhoto,
   };
 }

@@ -1,65 +1,23 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { fetcher } from "../../../helpers/api";
 import type { Photo } from "../models/photos";
-import { api, fetcher } from "../../../helpers/api";
-import { useQueryState, createSerializer, parseAsString } from "nuqs";
-import type { PhotoNewFormSchema } from "../schema";
-import { toast } from "sonner";
 
-const toSearchParams = createSerializer({
-  albumId: parseAsString,
-  q: parseAsString,
-});
+interface PhotoDetailsResponse extends Photo {
+  nextPhotoId?: string;
+  previousPhotoId?: string;
+}
 
-export default function usePhotos() {
-  const [albumId, setAlbumId] = useQueryState("albumId");
-  const [q, setSearchFoto] = useQueryState("q");
-
-  const { data, isLoading } = useQuery<Photo[]>({
-    queryKey: ["photos", albumId, q],
-    queryFn: () => fetcher(`/photos${toSearchParams({ albumId, q })}`),
+export default function usePhoto(id?: string) {
+  const { data, isLoading } = useQuery<PhotoDetailsResponse>({
+    queryKey: ["photo", id],
+    queryFn: () => fetcher(`/photos/${id}`),
+    enabled: id !== null ? true : false,
   });
 
-  const querryClient = useQueryClient();
-
-  async function createPhoto(payload: PhotoNewFormSchema) {
-    try {
-      const { data } = await api.post<Photo>("/photos", {
-        title: payload.title,
-      });
-
-      await api.post(
-        `/photos/${data.id}/image`,
-        {
-          file: payload.file[0],
-        },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      if (payload.albumsIds && payload.albumsIds.length > 0) {
-        await api.put(`/photos/${data.id}/albums`, {
-          albumsIds: payload.albumsIds,
-        });
-      }
-      querryClient.invalidateQueries({ queryKey: ["photos"] });
-
-      toast.success("Foto adicionada com sucesso");
-    } catch (error) {
-      toast.error("Erro ao cadastrar foto");
-    }
-  }
-
   return {
-    photos: data || [],
+    photo: data,
+    nextPhotoId: data?.nextPhotoId,
+    previeousPhotoId: data?.previousPhotoId,
     isLoadingPhoto: isLoading,
-    filters: {
-      albumId,
-      setAlbumId,
-      q,
-      setSearchFoto,
-    },
-    createPhoto,
   };
 }

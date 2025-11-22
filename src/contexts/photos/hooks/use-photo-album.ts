@@ -3,24 +3,24 @@ import { api } from "../../../helpers/api";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function usePhotoAlbums() {
-  async function managePhotoAlbum(photoId: string, albumsIds: string[]) {
-    const querryClient = useQueryClient();
+  const querryClient = useQueryClient();
 
+  async function managePhotoOnAlbum(photoId: string, albumsIds: string[]) {
     try {
       await api.put(`photos/${photoId}/albums`, {
         albumsIds,
       });
 
       querryClient.invalidateQueries({ queryKey: ["photo", photoId] });
-      querryClient.invalidateQueries({ queryKey: ["album"] });
-      toast.error("Albums atualizados");
+      querryClient.invalidateQueries({ queryKey: ["photos"] });
+      toast.success("Albums atualizados");
     } catch (error) {
-      toast.error("Error ao gerenciar algums de uma photo");
+      toast.error("Error ao gerenciar albums da foto");
       throw error;
     }
   }
 
   return {
-    managePhotoAlbum,
+    managePhotoOnAlbum,
   };
 }

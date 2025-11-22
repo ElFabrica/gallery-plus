@@ -7,7 +7,7 @@ import ImagemPreview from "../components/image-preview";
 import Button from "../components/button";
 import AlbumsListSelectable from "../contexts/albums/components/albums-list-selectable";
 import useAlbums from "../contexts/albums/hooks/use-albums";
-import usePhoto from "../contexts/photos/hooks/use-photo";
+import usePhoto from "../contexts/photos/hooks/use-photos";
 import type { Photo } from "../contexts/photos/models/photos";
 
 export default function PagePhotoDetails() {

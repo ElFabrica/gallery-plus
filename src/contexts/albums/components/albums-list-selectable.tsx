@@ -18,24 +18,26 @@ export default function AlbumsListSelectable({
   albums,
   photo,
 }: AlbumsListSelectableProps) {
-  const { managePhotoAlbum } = usePhotoAlbums();
-  const [isUdatingPhoto, setIsUpdatingPhoto] = useTransition();
+  const { managePhotoOnAlbum } = usePhotoAlbums();
+  const [isUpdatingPhoto, setIsUpdatingPhoto] = useTransition();
+
   function isChecked(albumId: string) {
     return photo?.albums?.some((album) => album.id === albumId);
   }
 
   function handlePhtoOnAlbums(albumId: string) {
-    let albumsId = [];
+    let albumsIds = [];
 
     if (isChecked(albumId)) {
-      albumsId = photo.albums
+      albumsIds = photo.albums
         .filter((album) => album.id !== albumId)
         .map((album) => album.id);
     } else {
-      albumsId = [...photo.albums.map((album) => album.id), albumId];
+      albumsIds = [...photo.albums.map((album) => album.id), albumId];
     }
-
-    setIsUpdatingPhoto(async () => managePhotoAlbum(photo.id, albumsId));
+    setIsUpdatingPhoto(async () => {
+      await managePhotoOnAlbum(photo.id, albumsIds);
+    });
   }
 
   return (
@@ -51,15 +53,15 @@ export default function AlbumsListSelectable({
               <InputChecbox
                 defaultChecked={isChecked(album.id)}
                 onChange={() => handlePhtoOnAlbums(album.id)}
-                disabled={isUdatingPhoto}
+                disabled={isUpdatingPhoto}
               />
             </div>
             {index !== albums.length - 1 && <Divider className="mt-4" />}
           </li>
         ))}
       {loading &&
-        Array.from({ length: 5 }).map((album) => (
-          <li key={`albums-list${album}`}>
+        Array.from({ length: 5 }).map((_, index) => (
+          <li key={`albums-list-${index}`}>
             <Skeleton className="h-[2.5rem]" />
           </li>
         ))}
