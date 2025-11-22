@@ -1,3 +1,4 @@
+import { useTransition } from "react";
 import { useParams } from "react-router";
 import Text from "../components/text";
 import Container from "../components/container";
@@ -7,13 +8,20 @@ import ImagemPreview from "../components/image-preview";
 import Button from "../components/button";
 import AlbumsListSelectable from "../contexts/albums/components/albums-list-selectable";
 import useAlbums from "../contexts/albums/hooks/use-albums";
-import usePhoto from "../contexts/photos/hooks/use-photos";
+import usePhoto from "../contexts/photos/hooks/use-photo.ts";
 import type { Photo } from "../contexts/photos/models/photos";
+import usePhotos from "../contexts/photos/hooks/use-photo.ts";
 
 export default function PagePhotoDetails() {
   const { id } = useParams();
-  const { isLoadingPhoto, nextPhotoId, photo, previeousPhotoId } = usePhoto(id);
+  const { isLoadingPhoto, nextPhotoId, photo, previousPhotoId } = usePhoto(id);
+  const { deletePhoto } = usePhotos();
   const { albums, isLoadingAlbums } = useAlbums();
+  const [isDeletingPhoto, setIsDeletingPhoto] = useTransition();
+
+  function handleDeletPhoto() {
+    setIsDeletingPhoto(async () => await deletePhoto(photo!.id));
+  }
 
   if (!photo && !isLoadingPhoto) {
     return <div>Photo not found</div>;
@@ -29,7 +37,7 @@ export default function PagePhotoDetails() {
           <Skeleton className="w-48 h-8" />
         )}
         <PhotosNavigator
-          previousPhotoId={previeousPhotoId}
+          previousPhotoId={previousPhotoId}
           nextPhotoId={nextPhotoId}
           loading={isLoadingPhoto}
         />
@@ -46,7 +54,9 @@ export default function PagePhotoDetails() {
             <Skeleton className="h-[21rem]" />
           )}
           {!isLoadingPhoto ? (
-            <Button variant="destructive">Excluir</Button>
+            <Button variant="destructive" onClick={handleDeletPhoto}>
+              {isDeletingPhoto ? "Excluindo..." : "Excluir"}
+            </Button>
           ) : (
             <Skeleton className="w-20 h-10" />
           )}

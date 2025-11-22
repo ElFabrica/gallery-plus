@@ -1,7 +1,7 @@
 import Button from "../../../components/button";
 import Skeleton from "../../../components/skeleton";
 import Text from "../../../components/text";
-import usePhotos from "../../photos/hooks/use-photo";
+import usePhotos from "../../photos/hooks/use-photos.ts";
 import type { Album } from "../models/album";
 import cx from "classnames";
 

@@ -35,7 +35,11 @@ export default function PhotoWidget({ photo, loading }: PhotoWidgetProps) {
           {!loading ? (
             <>
               {photo.albums.slice(0, 1).map((album) => (
-                <Badge className="truncate" size="xs" key={album.id}>
+                <Badge
+                  className="truncate"
+                  size="xs"
+                  key={`list-photo-${album.id}`}
+                >
                   {album.title}{" "}
                 </Badge>
               ))}
@@ -46,7 +50,7 @@ export default function PhotoWidget({ photo, loading }: PhotoWidgetProps) {
           ) : (
             Array.from({ length: 2 }).map((_, index) => (
               <Skeleton
-                id={`album-loading-${index}`}
+                key={`album-loading-${index}`}
                 className=" w-full h-4 rounded-sm"
               />
             ))

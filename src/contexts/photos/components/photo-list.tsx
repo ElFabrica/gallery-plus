@@ -17,14 +17,14 @@ export default function PhotosList({ photos, loading }: PhotosListProps) {
       >
         Total:{" "}
         {!loading ? (
-          <div>{photos.length}</div>
+          <div>{photos?.length}</div>
         ) : (
           <Skeleton className="w-6 h-6" />
         )}
       </Text>
-      {!loading && photos.length > 0 && (
+      {!loading && photos?.length > 0 && (
         <div className="grid grid-cols-5 gap-9">
-          {photos.map((photo) => (
+          {photos?.map((photo) => (
             <PhotoWidget photo={photo} key={photo.id} />
           ))}
         </div>
@@ -40,7 +40,7 @@ export default function PhotosList({ photos, loading }: PhotosListProps) {
           ))}
         </div>
       )}
-      {!loading && photos.length == 0 && (
+      {!loading && photos?.length == 0 && (
         <div className="flex justify-center items-center h-full">
           <Text variant="paragraph-large">Nenhuma foto encontrada</Text>
         </div>

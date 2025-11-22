@@ -1,23 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetcher } from "../../../helpers/api";
 import type { Photo } from "../models/photos";
+import { useQueryState, createSerializer, parseAsString } from "nuqs";
 
-interface PhotoDetailsResponse extends Photo {
-  nextPhotoId?: string;
-  previousPhotoId?: string;
-}
+const toSearchParams = createSerializer({
+  albumId: parseAsString,
+  q: parseAsString,
+});
 
-export default function usePhoto(id?: string) {
-  const { data, isLoading } = useQuery<PhotoDetailsResponse>({
-    queryKey: ["photo", id],
-    queryFn: () => fetcher(`/photos/${id}`),
-    enabled: id !== null ? true : false,
+export default function usePhotos() {
+  const [albumId, setAlbumId] = useQueryState("albumId");
+  const [q, setSearchFoto] = useQueryState("q");
+
+  const { data, isLoading } = useQuery<Photo[]>({
+    queryKey: ["photos", albumId, q],
+    queryFn: () => fetcher(`/photos${toSearchParams({ albumId, q })}`),
   });
 
   return {
-    photo: data,
-    nextPhotoId: data?.nextPhotoId,
-    previeousPhotoId: data?.previousPhotoId,
-    isLoadingPhoto: isLoading,
+    photos: data || [],
+    isLoadingPhotos: isLoading,
+    filters: {
+      albumId,
+      setAlbumId,
+      q,
+      setSearchFoto,
+    },
   };
 }

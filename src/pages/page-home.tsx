@@ -2,11 +2,11 @@ import Container from "../components/container";
 import AlbumsFilter from "../contexts/albums/components/albums-filter";
 import useAlbums from "../contexts/albums/hooks/use-albums";
 import PhotosList from "../contexts/photos/components/photo-list";
-import usePhotos from "../contexts/photos/hooks/use-photo";
+import usePhotos from "../contexts/photos/hooks/use-photos.ts";
 
 export default function PageHome() {
   const { albums, isLoadingAlbums } = useAlbums();
-  const { isLoadingPhoto, photos } = usePhotos();
+  const { isLoadingPhotos, photos } = usePhotos();
 
   return (
     <Container className="py-10">
@@ -15,7 +15,7 @@ export default function PageHome() {
         className="mb-9"
         loading={isLoadingAlbums}
       />
-      <PhotosList photos={photos} loading={isLoadingPhoto} />
+      <PhotosList photos={photos} loading={isLoadingPhotos} />
     </Container>
   );
 }

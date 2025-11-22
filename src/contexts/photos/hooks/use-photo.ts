@@ -1,35 +1,34 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Photo } from "../models/photos";
 import { api, fetcher } from "../../../helpers/api";
-import { useQueryState, createSerializer, parseAsString } from "nuqs";
+import type { Photo } from "../models/photos";
 import type { PhotoNewFormSchema } from "../schema";
 import { toast } from "sonner";
 import usePhotoAlbums from "./use-photo-album";
+import { useNavigate } from "react-router";
 
-const toSearchParams = createSerializer({
-  albumId: parseAsString,
-  q: parseAsString,
-});
+interface PhotoDetailResponse extends Photo {
+  nextPhotoId?: string;
+  previousPhotoId?: string;
+}
 
-export default function usePhotos() {
-  const [albumId, setAlbumId] = useQueryState("albumId");
-  const [q, setSearchFoto] = useQueryState("q");
-  const querryClient = useQueryClient();
-  const { managePhotoOnAlbum } = usePhotoAlbums();
-
-  const { data, isLoading } = useQuery<Photo[]>({
-    queryKey: ["photos", albumId, q],
-    queryFn: () => fetcher(`/photos${toSearchParams({ albumId, q })}`),
+export default function usePhoto(id?: string) {
+  const navigate = useNavigate();
+  const { data, isLoading } = useQuery<PhotoDetailResponse>({
+    queryKey: ["photo", id],
+    queryFn: () => fetcher(`/photos/${id}`),
+    enabled: !!id,
   });
+  const queryClient = useQueryClient();
+  const { managePhotoOnAlbum } = usePhotoAlbums();
 
   async function createPhoto(payload: PhotoNewFormSchema) {
     try {
-      const { data } = await api.post<Photo>("/photos", {
+      const { data: photo } = await api.post<Photo>("/photos", {
         title: payload.title,
       });
 
       await api.post(
-        `/photos/${data.id}/image`,
+        `/photos/${photo.id}/image`,
         {
           file: payload.file[0],
         },
@@ -39,26 +38,39 @@ export default function usePhotos() {
           },
         }
       );
-      if (payload.albumsIds && payload.albumsIds.length > 0) {
-        await managePhotoOnAlbum(data.id, payload.albumsIds);
-      }
-      querryClient.invalidateQueries({ queryKey: ["photos"] });
 
-      toast.success("Foto adicionada com sucesso");
+      if (payload.albumsIds && payload.albumsIds.length > 0) {
+        await managePhotoOnAlbum(photo.id, payload.albumsIds);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["photos"] });
+
+      toast.success("Foto crida com sucesso");
     } catch (error) {
-      toast.error("Erro ao cadastrar foto");
+      toast.success("Erro ao criar foto");
+      throw error;
+    }
+  }
+
+  async function deletePhoto(photoId: string) {
+    try {
+      await api.delete(`/photos/${photoId}`);
+
+      toast.success("Foto excluída com sucesso");
+
+      navigate("/");
+    } catch (error) {
+      toast.error("Erro ao excluir foto");
+      throw error;
     }
   }
 
   return {
-    photos: data || [],
+    photo: data,
+    nextPhotoId: data?.nextPhotoId,
+    previousPhotoId: data?.previousPhotoId,
     isLoadingPhoto: isLoading,
-    filters: {
-      albumId,
-      setAlbumId,
-      q,
-      setSearchFoto,
-    },
     createPhoto,
+    deletePhoto,
   };
 }

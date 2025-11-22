@@ -2,7 +2,7 @@ import React from "react";
 import SearchIcon from "../assets/icons/search.svg?react";
 import InputText from "./input-text";
 import { debounce } from "../helpers/utils";
-import usePhotos from "../contexts/photos/hooks/use-photo";
+import usePhotos from "../contexts/photos/hooks/use-photos.ts";
 
 export default function PhotosSearch() {
   const { filters } = usePhotos();

@@ -3,7 +3,7 @@ import type { AlbumNewFormSchema } from "../schema";
 import { api } from "../../../helpers/api";
 import type { Album } from "../models/album";
 import { useQueryClient } from "@tanstack/react-query";
-import usePhotos from "../../photos/hooks/use-photo";
+import usePhotos from "../../photos/hooks/use-photo.ts";
 import usePhotoAlbums from "../../photos/hooks/use-photo-album";
 
 export default function useAlbum() {
